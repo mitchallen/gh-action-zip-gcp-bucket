@@ -17,13 +17,19 @@ jobs:
     # Step to Zip the folder
     - name: Zip the folder
       run: zip -r ./${{ env.TARGET_ZIP }} source/
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        # workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account:  ${{ secrets.GCP_SA_KEY }}
     
     # Step to Authenticate with GCP
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v2
       with:
         version: 'latest'
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        # service_account_key: ${{ secrets.GCP_SA_KEY }}
         project_id: ${{ secrets.GCP_PROJECT_ID }}
     
     # Step to Configure Docker to use the gcloud command-line tool as a credential helper
