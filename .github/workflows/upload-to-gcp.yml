@@ -42,5 +42,7 @@ jobs:
         EXTENSION="${target_zip##*.}"
         FILENAME="${target_zip%.*}"
         # Construct new filename with date stamp
+        LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
         NEW_FILENAME="${FILENAME}_${TIMESTAMP}.${EXTENSION}"
+        gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${LATEST_FILENAME}
         gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${NEW_FILENAME}
