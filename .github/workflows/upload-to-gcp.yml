@@ -38,9 +38,9 @@ jobs:
     - name: Upload to Google Cloud Storage
       run: |-
         target_zip=${{ env.TARGET_ZIP }}
-        DATE_STAMP=$(date +%Y-%m-%d)  # Format: YYYY-MM-DD
+        TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)  # Format: YYYY-MM-DD_HH-MM-SS
         EXTENSION="${target_zip##*.}"
         FILENAME="${target_zip%.*}"
         # Construct new filename with date stamp
-        NEW_FILENAME="${FILENAME}_${DATE_STAMP}.${EXTENSION}"
-        gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads//${NEW_FILENAME}
+        NEW_FILENAME="${FILENAME}_${TIMESTAMP}.${EXTENSION}"
+        gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${NEW_FILENAME}
