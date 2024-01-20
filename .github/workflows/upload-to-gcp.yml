@@ -1,0 +1,35 @@
+name: Zip and Upload to GCP Bucket
+
+env:
+    TARGET_ZIP: source.zip
+
+on:
+    push:
+        tags:
+        - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    # Step to Zip the folder
+    - name: Zip the folder
+      run: zip -r ./${{ env.TARGET_ZIP }} source/
+    
+    # Step to Authenticate with GCP
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        version: 'latest'
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+    
+    # Step to Configure Docker to use the gcloud command-line tool as a credential helper
+    - run: |-
+        gcloud auth configure-docker
+    
+    # Step to Upload the file to GCP Bucket
+    - name: Upload to Google Cloud Storage
+      run: gsutil cp ./${{ env.TARGET_ZIP }} gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/
