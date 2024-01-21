@@ -37,12 +37,11 @@ jobs:
     # Step to Upload the file to GCP Bucket
     - name: Upload to Google Cloud Storage
       run: |-
-        target_zip=${{ env.TARGET_ZIP }}
+        TARGET_ZIP=${{ env.TARGET_ZIP }}
+        EXTENSION="${TARGET_ZIP##*.}"
+        FILENAME="${TARGET_ZIP%.*}"
         TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)  # Format: YYYY-MM-DD_HH-MM-SS
-        EXTENSION="${target_zip##*.}"
-        FILENAME="${target_zip%.*}"
-        # Construct new filename with date stamp
         LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
         NEW_FILENAME="${FILENAME}_${TIMESTAMP}.${EXTENSION}"
-        gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${LATEST_FILENAME}
-        gsutil cp ./$target_zip gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${NEW_FILENAME}
+        gsutil cp ./$TARGET_ZIP gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${LATEST_FILENAME}
+        gsutil cp ./$TARGET_ZIP gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${NEW_FILENAME}
