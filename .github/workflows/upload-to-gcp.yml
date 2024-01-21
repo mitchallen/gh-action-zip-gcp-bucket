@@ -2,6 +2,7 @@ name: Zip and Upload to GCP Bucket
 
 env:
     TARGET_ZIP: source.zip
+    BUCKET_FOLDER: uploads
 
 on:
     push:
@@ -15,13 +16,13 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
     
-    # Step to Zip the folder
     - name: Zip the folder
       run: zip -r ./${{ env.TARGET_ZIP }} source/
 
-    - id: 'auth'
+    - name: Authorize GCP
       uses: 'google-github-actions/auth@v2'
       with:
         credentials_json:  ${{ secrets.GCP_SA_KEY }}
@@ -32,19 +33,21 @@ jobs:
       with:
         version: '>= 363.0.0'
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
+
     # Step to Configure Docker to use the gcloud command-line tool as a credential helper
-    - run: |-
+    - name: Confire Docker
+      run: |-
         gcloud auth configure-docker
     
     # Step to Upload the file to GCP Bucket
     - name: Upload to Google Cloud Storage
       run: |-
         TARGET_ZIP=${{ env.TARGET_ZIP }}
+        BUCKET_PATH=${{ secrets.GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
         EXTENSION="${TARGET_ZIP##*.}"
         FILENAME="${TARGET_ZIP%.*}"
         TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)  # Format: YYYY-MM-DD_HH-MM-SS
         LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
         NEW_FILENAME="${FILENAME}_${TIMESTAMP}.${EXTENSION}"
-        gsutil cp ./$TARGET_ZIP gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${LATEST_FILENAME}
-        gsutil cp ./$TARGET_ZIP gs://${{ secrets.GCP_TARGET_BUCKET }}/uploads/${NEW_FILENAME}
+        gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${LATEST_FILENAME}
+        gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${NEW_FILENAME}
