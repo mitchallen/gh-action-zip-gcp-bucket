@@ -1,4 +1,4 @@
-gh-action-zio-gcp-bucket
+gh-action-zip-gcp-bucket
 ==
 
 Use a github action to push a folder to a GCP bucket
