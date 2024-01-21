@@ -1,6 +1,10 @@
 gh-action-zip-gcp-bucket
 ==
 
+See article:
+
+* [How to Copy to a Google Storage Bucket with GitHub Actions (GCP)](https://scriptable.com/cloud/github-actions-gcp-bucket/)
+
 Use a github action to push a folder to a GCP bucket
 
 An example of how to:
