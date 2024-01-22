@@ -35,7 +35,7 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
 
     # Step to Configure Docker to use the gcloud command-line tool as a credential helper
-    - name: Confire Docker
+    - name: Configure Docker
       run: |-
         gcloud auth configure-docker
     
